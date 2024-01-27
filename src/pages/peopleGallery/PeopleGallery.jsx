@@ -49,15 +49,14 @@ const PeopleGallery = () => {
     });
   }, []);
 
-  let profileImg = `${url.poster}${actorInfo?.profile_path}`;
-  //TODO: fix for some actors, profile path is undefined in actorInfo
-  // if (actorInfo?.profile_path === "undefined") {
-  //   profileImg = `${url.poster}${profiles[0]?.profile_path}`;
-  //   console.log(profileImg);
-  // }
+  let profileImg =
+    actorInfo?.profile_path === undefined
+      ? `${url.poster}${profiles[0]?.file_path}`
+      : `${url.poster}${actorInfo?.profile_path}`;
 
   return (
     // TODO: fix css and gallery responsiveness and all set
+    //TODO: display extra actor info from extraActorInfo state in profile-sidebar
     <div className="profile-container">
       <div className="profile-sidebar">
         <div className="profile-img">
@@ -84,22 +83,26 @@ const PeopleGallery = () => {
       </div>
 
       <div className="gallery-container">
-        <div className="actor-movies-container">
-          <h4>Known for</h4>
-          {actorInfo.known_for?.map((movie) => {
-            const movieImg = `${url.poster}${movie.backdrop_path}`;
-            return (
-              <div className="movie" key={movie.id}>
-                <img
-                  src={movieImg}
-                  alt={movie.original_title}
-                  className="movie-img"
-                />
-                <p className="movie-title">{movie.original_title}</p>
-              </div>
-            );
-          })}
-        </div>
+        {actorInfo?.known_for && (
+          <div className="actor-movies-container">
+            <h4>Known for</h4>
+            <div className="movie-container">
+              {actorInfo?.known_for?.map((movie) => {
+                const movieImg = `${url.poster}${movie.backdrop_path}`;
+                return (
+                  <div className="movie" key={movie.id}>
+                    <img
+                      src={movieImg}
+                      alt={movie.original_title}
+                      className="movie-img"
+                    />
+                    <p className="movie-title">{movie.original_title}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <h1 className="gallery-title">Gallery</h1>
         <div className="grid">
           {profiles?.map((profile) => {
