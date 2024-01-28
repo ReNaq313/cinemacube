@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 import { fetchDataFromApi } from "../../utils/api";
 
@@ -46,6 +47,7 @@ const PeopleGallery = () => {
     fetchDataFromApi(`/person/${id}`).then((res) => {
       console.log(res);
       setExtraActorInfo(res);
+      console.log(extraActorInfo);
     });
   }, []);
 
@@ -64,15 +66,27 @@ const PeopleGallery = () => {
         </div>
         <h3 className="profile-name">{actorInfo.name}</h3>
         <h5 className="info-heading">Personal Info</h5>
-        <div className="info-group">
-          <p className="info-subheading">Known for</p>
-          <p className="info-value">{actorInfo.known_for_department}</p>
-        </div>
+        {actorInfo.known_for_department && (
+          <div className="info-group">
+            <p className="info-subheading">Known for</p>
+            <p className="info-value">{actorInfo.known_for_department}</p>
+          </div>
+        )}
         <div className="info-group">
           <p className="info-subheading">Gender</p>
           <p className="info-value">
             {actorInfo.gender == 2 ? "Male" : "Female"}
           </p>
+        </div>
+        <div className="info-group">
+          <p className="info-subheading">Birthday</p>
+          <p className="info-value">
+            {dayjs(extraActorInfo.birthday).format("MMM D, YYYY")}
+          </p>
+        </div>
+        <div className="info-group">
+          <p className="info-subheading">Place of birth</p>
+          <p className="info-value">{extraActorInfo.place_of_birth}</p>
         </div>
         {actorInfo.name != actorInfo.original_name && (
           <div className="info-group">
@@ -85,7 +99,12 @@ const PeopleGallery = () => {
       <div className="gallery-container">
         {actorInfo?.known_for && (
           <div className="actor-movies-container">
-            <h4>Known for</h4>
+            <div className="info-group">
+              <p className="info-subheading">Biography</p>
+              <p className="info-value">{extraActorInfo.biography}</p>
+            </div>
+
+            <h4 className="gradient-text">Known for</h4>
             <div className="movie-container">
               {actorInfo?.known_for?.map((movie) => {
                 const movieImg = `${url.poster}${movie.backdrop_path}`;
@@ -96,7 +115,7 @@ const PeopleGallery = () => {
                       alt={movie.original_title}
                       className="movie-img"
                     />
-                    <p className="movie-title">{movie.original_title}</p>
+                    <p className="movie-title">{movie.original_title || 'No Title Found'}</p>
                   </div>
                 );
               })}
